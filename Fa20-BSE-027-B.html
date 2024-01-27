@@ -1,0 +1,236 @@
+<!-- Sohaib Zahid
+    Fa20-BSE-027-B  -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Navbar and Form</title>
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- <script src="script.js"></script> -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 97%;
+            padding: 20px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 5px;
+            margin-top: 10px;
+            display: flex;
+            margin: 2px;
+
+        }
+
+        .form-title {
+            background-color: rgb(25, 72, 110);
+            color: white;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 18px;
+
+        }
+
+        form {
+            width: 80%;
+            border: solid 2px black;
+        }
+
+        nav {
+            background-color: black;
+            height: 45px;
+        }
+
+        nav ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: flex;
+        }
+
+        nav li {
+            margin-right: 20px;
+        }
+
+        nav a {
+            display: block;
+            color: lightgrey;
+            text-decoration: none;
+            padding: 15px;
+        }
+
+        nav a:focus {
+            color: white;
+        }
+
+        .sidebar-box {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .table th {
+            background-color: #f2f2f2;
+        }
+
+        @media (max-width: 767px) {
+            .container {
+                flex-direction: column;
+            }
+        }
+        
+    </style>
+
+</head>
+
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="#">WebsiteName</a></li>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Page1</a></li>
+            <li><a href="#">Page2</a></li>
+            <li><a href="#">Page3</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+
+        <form>
+            <div class="form-title">
+                User Registration Form - Primary Panel
+            </div>
+          
+            <label for="email">Email:</label>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            <input type="email" id="email" name="email"><br><br>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password"><br><br>
+       
+            <fieldset class="row mb-3">
+                <legend class="col-form-label col-sm-2 pt-0">Choose Subjects</legend>
+                <div class="row mb-3">
+                    <div class="col-sm-10 offset-sm-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="gridCheck1">
+                            <label class="form-check-label" for="gridCheck1">
+                                Web Development
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-10 offset-sm-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="gridCheck1">
+                            <label class="form-check-label" for="gridCheck1">
+                                Web Services
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <hr>
+            <div class="create_user">
+            <button type="submit" class="btn btn-primary">Create User</button></div> 
+        </form>
+        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+        <div class="sidebar-panel">
+            <div class="sidebar-box">
+                <p>My Name is Sohaib Zahid</p>
+            </div>
+            <div class="sidebar-box">
+                <p>My Name is Sohaib Zahid</p>
+            </div>
+            <div class="sidebar-box">
+                <p>My Name is Sohaib Zahid</p>
+            </div>
+        </div>
+    </div>
+    <!-- Books Table -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Author</th>
+                <th>Title</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="book-table-body">
+            <!-- Data will be populated here -->
+        </tbody>
+    </table>
+
+    <script>
+
+        $(document).ready(function () {
+            fetchBooks();
+
+            $('body').on('click', '.delete-btn', function () {
+                $(this).closest('tr').remove();
+            });
+        });
+
+        function fetchBooks() {
+            $.ajax({
+                url: "http://192.155.90.208/books.json",
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    populateTable(data.catalog.book);
+                },
+                error: function () {
+                    alert("Failed to fetch book data.");
+                }
+            });
+        }
+
+        function populateTable(books) {
+            const tableBody = $('#book-table-body');
+
+            $.each(books, function (index, book) {
+                const row = $('<tr>');
+
+                $('<td>').text(book.author).appendTo(row);
+                $('<td>').text(book.title).appendTo(row);
+                $('<td>').text(book.price).appendTo(row);
+                $('<td>').text(book.description).appendTo(row);
+
+                const actionCell = $('<td>');
+                const deleteButton = $('<button>').addClass('btn btn-danger delete-btn').text('Delete');
+                actionCell.append(deleteButton);
+                row.append(actionCell);
+
+                tableBody.append(row);
+            });
+        }
+
+    </script>
+
+
+</body>
+
+</html>
